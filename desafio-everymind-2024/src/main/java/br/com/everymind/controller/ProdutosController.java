@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.everymind.dto.ProdutosDTO;
 import br.com.everymind.service.ProdutosService;
 
-//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/produtos")
 public class ProdutosController {
@@ -33,8 +33,8 @@ public class ProdutosController {
 		this.produtosService = produtosService;
 	}
 
-	// @GetMapping(value = "/", produces = "application/json")
-	@GetMapping
+	 @GetMapping(value = "/", produces = "application/json")
+	//@GetMapping
 	public List<ProdutosDTO> findAll() {
 
 		return produtosService.findAll();

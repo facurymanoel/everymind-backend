@@ -5,7 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.everymind.dto.ProdutosDTO;
+import br.com.everymind.model.Produtos;
+import br.com.everymind.repository.ProdutosRepository;
 import br.com.everymind.service.ProdutosService;
 
 @CrossOrigin(origins = "*")
@@ -28,13 +32,17 @@ public class ProdutosController {
 	private ProdutosService produtosService;
 
 	@Autowired
+	private ProdutosRepository produtosRepository;
+
+	@Autowired
 	public ProdutosController(ProdutosService produtosService) {
 
 		this.produtosService = produtosService;
 	}
 
-	 @GetMapping(value = "/", produces = "application/json")
-	//@GetMapping
+	@GetMapping(value = "/", produces = "application/json")
+	@CachePut("cacheusuarios")
+	// @GetMapping
 	public List<ProdutosDTO> findAll() {
 
 		return produtosService.findAll();
@@ -65,6 +73,17 @@ public class ProdutosController {
 	public void delete(@PathVariable Long id) {
 
 		produtosService.delete(id);
+	}
+
+	@GetMapping("/produtoPorNome/{nome}")
+	@CachePut("cacheusuarios")
+	public ResponseEntity<List<Produtos>> produtoPorNome(@PathVariable("nome") String nome)
+			throws InterruptedException {
+
+		List<Produtos> list = (List<Produtos>) produtosRepository.findUserByNome(nome);
+
+		return new ResponseEntity<List<Produtos>>(list, HttpStatus.OK);
+
 	}
 
 }

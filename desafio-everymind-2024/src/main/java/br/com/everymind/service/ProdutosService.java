@@ -3,7 +3,11 @@ package br.com.everymind.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +36,15 @@ public class ProdutosService {
 				                 .stream()
 				                 .map(produtosMapper::toDTO)
 				                 .collect(Collectors.toList());
+	}
+	
+	//Método com Paginação
+	public Page<ProdutosDTO> findAllPagina(int pagina) {
+		
+		PageRequest page = PageRequest.of(pagina, 5, Sort.by("nome"));
+		Page<Produtos> list = produtosRepository.findAll(page);
+		Page<ProdutosDTO> dto = list.map(p -> new ModelMapper().map(p, ProdutosDTO.class));
+		return dto;
 	}
 	
 	 public ProdutosDTO findById(Long id) {

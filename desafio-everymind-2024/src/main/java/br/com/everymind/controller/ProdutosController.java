@@ -5,7 +5,9 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,17 +42,27 @@ public class ProdutosController {
 		this.produtosService = produtosService;
 	}
 
-	@GetMapping(value = "/", produces = "application/json")
+	@CacheEvict(value = "cacheusuarios", allEntries = true)
 	@CachePut("cacheusuarios")
-	// @GetMapping
+
+	 /*Método findAll sem paginação
+	@GetMapping(value = "/", produces = "application/json")
 	public List<ProdutosDTO> findAll() {
 
 		return produtosService.findAll();
 
 	}
-
-	@GetMapping("/{id}")
-	public ProdutosDTO findByID(@PathVariable Long id) {
+    */
+	 
+	   // Método findAll com Paginação
+	   @GetMapping(value = "/page/{pagina}", produces = "application/json") 
+	   public Page<ProdutosDTO> findAll(@PathVariable int pagina){
+		   return produtosService.findAllPagina(pagina);
+	  
+	  }
+	  
+	  @GetMapping("/{id}")
+	  public ProdutosDTO findByID(@PathVariable Long id) {
 
 		return produtosService.findById(id);
 	}
